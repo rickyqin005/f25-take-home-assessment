@@ -3,6 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 import uvicorn
+from dotenv import load_dotenv
+import os
+import requests
+import uuid
+
+load_dotenv()
 
 app = FastAPI(title="Weather Data System", version="1.0.0")
 
@@ -28,13 +34,16 @@ class WeatherResponse(BaseModel):
 @app.post("/weather", response_model=WeatherResponse)
 async def create_weather_request(request: WeatherRequest):
     """
-    You need to implement this endpoint to handle the following:
-    1. Receive form data (date, location, notes)
-    2. Calls WeatherStack API for the location
-    3. Stores combined data with unique ID in memory
-    4. Returns the ID to frontend
+    Fetches WeatherStack API for the provided location
+    Returns unique ID referencing weather data
     """
-    pass
+    response = requests.get("http://api.weatherstack.com/current", params={
+        "access_key": os.getenv("WEATHER_API_KEY"),
+        "query": request.location
+    })
+    new_id = str(uuid.uuid4())
+    weather_storage[new_id] = response.json()
+    return { "id" : new_id }
 
 @app.get("/weather/{weather_id}")
 async def get_weather_data(weather_id: str):
