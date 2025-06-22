@@ -41,8 +41,12 @@ async def create_weather_request(request: WeatherRequest):
         "access_key": os.getenv("WEATHER_API_KEY"),
         "query": request.location
     })
+    combined_data = {
+        **response.json(),
+        "user_data": request
+    }
     new_id = str(uuid.uuid4())
-    weather_storage[new_id] = response.json()
+    weather_storage[new_id] = combined_data
     return { "id" : new_id }
 
 @app.get("/weather/{weather_id}")
