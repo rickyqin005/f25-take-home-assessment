@@ -9,6 +9,7 @@ import requests
 import uuid
 
 load_dotenv()
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 app = FastAPI(title="Weather Data System", version="1.0.0")
 
@@ -37,14 +38,27 @@ async def create_weather_request(request: WeatherRequest):
     Fetches WeatherStack API for the provided location
     Returns unique ID referencing weather data
     """
+    if not WEATHER_API_KEY:
+        raise HTTPException(status_code=500, detail="API Key Missing")
+    
     response = requests.get("http://api.weatherstack.com/current", params={
-        "access_key": os.getenv("WEATHER_API_KEY"),
+        "access_key": WEATHER_API_KEY,
         "query": request.location
     })
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail="Weather API Error")
+    
     combined_data = {
         **response.json(),
         "user_data": request
     }
+
+    if "success" in combined_data and not combined_data["success"]:
+        # usually caused by invalid or missing values
+        if 605 <= combined_data["error"]["code"] and combined_data["error"]["code"] <= 624:
+            raise HTTPException(status_code=400, detail="Weather API Error")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
     new_id = str(uuid.uuid4())
     weather_storage[new_id] = combined_data
     return { "id" : new_id }
