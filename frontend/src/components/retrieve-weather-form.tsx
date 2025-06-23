@@ -113,7 +113,7 @@ export function RetrieveWeatherForm() {
               ? <>
                 <p className="text-xl">{`${result.data.location.name}, ${result.data.location.country}`}</p>
                 <p>{`${new Date(result.data.location.localtime).toLocaleString()} (local time)`}</p>
-                <div className="flex flex-row items-center py-2">
+                <div className="flex flex-row items-center pt-2 pb-4">
                   <img src={result.data.current.weather_icons[0]}></img>
                   <div className="text-4xl px-4">{`${result.data.current.temperature}`}
                     <span className="text-sm align-top">°C</span>
@@ -125,7 +125,7 @@ export function RetrieveWeatherForm() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-row flex-wrap gap-x-8 pb-4">
+                <div className="flex flex-row flex-wrap gap-x-8 pb-5">
                   <div>{`Humidity: ${result.data.current.humidity}%`}</div>
                   <div>{`Pressure: ${result.data.current.pressure} `}
                     <span className="text-sm">hPa</span>
@@ -138,7 +138,35 @@ export function RetrieveWeatherForm() {
                     <span className="text-sm">km</span>
                   </div>
                 </div>
-                <div>{`Notes: ${result.data.user_data.notes}`}</div>
+                <div className="pb-5">
+                  <div>Astronomy</div>
+                  <div className="grid grid-cols-2 gap-x-8 text-sm opacity-50">
+                    <div>{`Sunrise: ${result.data.current.astro.sunrise}`}</div>
+                    <div>{`Sunset: ${result.data.current.astro.sunset}`}</div>
+                    <div>{`Moonrise: ${result.data.current.astro.moonrise}`}</div>
+                    <div>{`Moonset: ${result.data.current.astro.moonset}`}</div>
+                    <div className="col-span-2">{`Phase: ${result.data.current.astro.moon_phase}`}</div>
+                  </div>
+                </div>
+                <div className="pb-5">
+                  <div>Air Quality</div>
+                  <div className="grid grid-cols-3 gap-x-4 text-sm opacity-50">
+                    <div>{`PM₂.₅: ${result.data.current.air_quality.pm2_5}`}</div>
+                    <div>{`PM₁₀: ${result.data.current.air_quality.pm10}`}</div>
+                    <div>{`CO: ${result.data.current.air_quality.co}`}</div>
+                    <div>{`NO₂: ${result.data.current.air_quality.no2}`}</div>
+                    <div>{`O₃: ${result.data.current.air_quality.o3}`}</div>
+                    <div>{`SO₂: ${result.data.current.air_quality.so2}`}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-4 text-sm opacity-50">
+                    <div>{`GB Defra Index: ${result.data.current.air_quality["gb-defra-index"]}`}</div>
+                    <div>{`US EPA Index: ${result.data.current.air_quality["us-epa-index"]}`}</div>
+                  </div>
+                </div>
+                <div>
+                  <div>Notes</div>
+                  <div className="opacity-50">{result.data.user_data.notes}</div>
+                </div>
               </>
               : <p className="text-sm font-medium">{result.errorMessage}</p> }
             </div>
