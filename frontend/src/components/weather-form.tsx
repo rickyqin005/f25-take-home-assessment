@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "./ui/textarea";
 
-interface WeatherFormData {
+export interface WeatherFormData {
   date: string;
   location: string;
   notes: string;
